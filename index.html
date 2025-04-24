@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Thời tiết realtime</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; margin-top: 50px; }
+    input { padding: 8px; width: 200px; }
+    button { padding: 8px 12px; margin-left: 8px; }
+    .weather { margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h1>🌤️ Xem thời tiết</h1>
+  <input id="city" placeholder="Nhập tên thành phố">
+  <button onclick="getWeather()">Xem</button>
+
+  <div class="weather" id="result"></div>
+
+  <script>
+    const API_KEY = '1af72fd21a9494d0c7b0c164444765b2'; // Thay YOUR_API_KEY bằng API key của bạn
+
+    async function getWeather() {
+      const city = document.getElementById('city').value.trim();
+      if (!city) return alert('Vui lòng nhập tên thành phố');
+
+      const url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&appid=${API_KEY}&units=metric&lang=vi`;
+
+      try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('Không tìm thấy thành phố');
+        const data = await res.json();
+
+        const html = `
+          <h2>${data.name}, ${data.sys.country}</h2>
+          <p>Nhiệt độ: ${data.main.temp}°C</p>
+          <p>Thời tiết: ${data.weather[0].description}</p>
+          <p>Độ ẩm: ${data.main.humidity}%</p>
+          <p>Gió: ${data.wind.speed} m/s</p>
+        `;
+        document.getElementById('result').innerHTML = html;
+      } catch (err) {
+        document.getElementById('result').innerHTML = `<p style="color:red">${err.message}</p>`;
+      }
+    }
+  </script>
+</body>
+</html>
